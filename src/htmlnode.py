@@ -21,36 +21,42 @@ class HTMLNode:
         return return_string
     
     def __repr__(self):
-        return_string = ""
-        return_string += ("=========HTMLNode Status=========") + "\n"
-        return_string += ("") + "\n"
-        return_string += (f"tag = {self.tag}") + "\n"
-        return_string += (f"value = {self.value}") + "\n"
-        if self.children != None:
-            return_string += (f"children = {self.children}") + "\n"
-        if self.props != None:
-            return_string += (f"props = {self.props}") + "\n"
-        return_string += ("") + "\n"
-        return_string += ("=================================") + "\n"
-        return return_string
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
 
 class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
 
-    def __init__(self,tag,value,children,props):
-        super().__init__(tag,value,children,props)
-        self.children = []
-    
     def to_html(self):
-        if self.value == None:
-            raise ValueError ("all leaf nodes must have a value")
-        if self.tag == None: return self.value
-        return super().to_html()
-    
-    def test_leaf_to_html_p(self):
-        node = LeafNode("p", "Hello, world!")
-        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+        if self.value is None:
+            raise ValueError("invalid HTML: no value")
+        if self.tag is None:
+            return self.value
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
     def __repr__(self):
-        return super().__repr__()
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
         
+
+class ParentNode(HTMLNode):
+
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError ("Parent node must have a tag")
+        if self.children == None:
+            raise ValueError ("Parent node must have children")
+        
+        children_html = ""
+        for child in self.children:
+            children_html += child.to_html()
+        return f"<{self.tag}>{children_html}</{self.tag}>"
+    
+        # return super().to_html()
+
+
+    
+
 
