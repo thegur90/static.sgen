@@ -1,4 +1,4 @@
-# static.sgen
+# static.sgen  - DEPRECATED
 A personal learning project  - static site generator
 
 
